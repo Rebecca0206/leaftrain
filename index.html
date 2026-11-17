@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>LeafTrain · leafactivity.com</title>
+<meta name="description" content="LeafTrain: drive a freight train around the world. Climb mountains, deliver cargo, upgrade your train. A free leafactivity.com game.">
+<meta name="theme-color" content="#1d4a28">
+<link rel="manifest" href="/leaftrain/manifest.webmanifest">
+<link rel="icon" href="https://leafactivity.com/icons/icon-192.png">
+<link rel="apple-touch-icon" href="https://leafactivity.com/icons/apple-touch-icon.png">
+<!--/*la-back*/ LeafTrain has its own leafactivity.com link in the top bar, so the shared Back button is not added. -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;touch-action:manipulation}
+html,body{margin:0;height:100%;overflow:hidden;background:#10231a;color:#fff;font:600 15px/1.25 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+#wrap{position:fixed;inset:0}
+#sky{position:absolute;inset:0;background:linear-gradient(#5b86b8,#cfe0f1);transition:background 1.5s}
+#c{position:absolute;inset:0;width:100%;height:100%;display:block}
+button{font:inherit;color:#fff;border:0;border-radius:14px;background:rgba(20,40,28,.78);min-width:48px;min-height:48px;padding:0 12px;cursor:pointer;backdrop-filter:blur(3px)}
+button:active{filter:brightness(1.4)}button[disabled]{opacity:.45}
+#top{flex-wrap:wrap;position:absolute;left:0;right:0;top:0;display:flex;gap:6px;align-items:center;padding:calc(6px + env(safe-area-inset-top)) calc(8px + env(safe-area-inset-right)) 4px calc(8px + env(safe-area-inset-left));pointer-events:none}
+#top>*{pointer-events:auto}
+#home{display:flex;align-items:center;min-height:48px;padding:0 10px;border-radius:14px;background:rgba(20,40,28,.78);color:#f3d98b;text-decoration:none;font-weight:800;font-size:13px}
+#money{background:rgba(20,40,28,.78);border-radius:14px;min-height:48px;padding:0 12px;display:flex;align-items:center;font-weight:800;color:#9be28c;font-size:17px}
+#chip{order:10;flex:1 1 100%;height:48px;min-height:48px;min-width:0;text-align:left;font-size:13px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+#side{position:absolute;left:calc(8px + env(safe-area-inset-left));top:calc(178px + env(safe-area-inset-top));display:flex;flex-direction:column;gap:8px}
+#tele{position:absolute;left:50%;top:calc(120px + env(safe-area-inset-top));transform:translateX(-50%);display:flex;gap:8px;align-items:stretch;pointer-events:none;max-width:98vw}
+.pill{background:rgba(10,24,16,.72);border-radius:14px;padding:6px 10px;text-align:center;min-width:64px}
+.pill b{display:block;font-size:26px;line-height:1}.pill small{font-size:11px;opacity:.8}
+#spd b{font-size:34px}
+#limit{display:none;align-items:center;gap:6px}
+#limit i{display:inline-flex;width:38px;height:38px;border-radius:50%;background:#fff;border:5px solid #d3202a;color:#111;font:900 15px/28px sans-serif;justify-content:center;font-style:normal}
+.bar{height:6px;border-radius:3px;background:rgba(255,255,255,.2);margin-top:4px;overflow:hidden}.bar i{display:block;height:100%;background:#8be28c;width:0}
+#alert{position:absolute;left:50%;top:calc(206px + env(safe-area-inset-top));transform:translateX(-50%);padding:6px 14px;border-radius:12px;background:rgba(200,30,40,.88);font-weight:800;display:none;text-align:center;pointer-events:none;max-width:94vw}
+#hint{position:absolute;left:50%;bottom:calc(150px + env(safe-area-inset-bottom));transform:translateX(-50%);padding:5px 12px;border-radius:12px;background:rgba(10,24,16,.7);font-size:13px;pointer-events:none;text-align:center;max-width:70vw}
+#ctl{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:space-between;align-items:flex-end;padding:8px calc(10px + env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) calc(10px + env(safe-area-inset-left));pointer-events:none}
+#ctl>*{pointer-events:auto}
+#left{display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+#left .row{display:flex;gap:8px}
+#bBrake{width:112px;height:96px;background:rgba(190,35,40,.9);font-size:20px;font-weight:900;border-radius:20px}
+#bBrake.on{background:#ff3b3b}
+#right{display:flex;flex-direction:column;align-items:center;gap:6px}
+#lever{position:relative;width:64px;height:150px;border-radius:18px;background:rgba(10,24,16,.72);touch-action:none}
+#lever .fill{position:absolute;left:8px;right:8px;bottom:8px;background:linear-gradient(#2f6b3a,#9be28c);border-radius:10px;height:0}
+#lever .knob{position:absolute;left:2px;right:2px;height:30px;border-radius:12px;background:#f3d98b;color:#222;text-align:center;line-height:30px;font-weight:900;font-size:13px;box-shadow:0 2px 8px #0008;bottom:0}
+#right button{width:64px;height:48px;font-size:20px}
+.tiny{font-size:12px;min-width:52px;padding:0 8px}
+#cab{position:absolute;inset:0;pointer-events:none;display:none}
+#cab::before{content:"";position:absolute;left:0;right:0;bottom:0;height:22%;background:linear-gradient(#0000,#15181d 28%,#0c0e11);}
+#cab::after{content:"";position:absolute;inset:0;border:0 solid #14171b;border-width:7vh 5vw 0 5vw;border-radius:0;box-shadow:inset 0 0 40px #000a}
+#sheet{position:absolute;inset:0;background:rgba(6,16,10,.9);display:none;overflow:auto;padding:calc(10px + env(safe-area-inset-top)) calc(10px + env(safe-area-inset-right)) calc(18px + env(safe-area-inset-bottom)) calc(10px + env(safe-area-inset-left));-webkit-overflow-scrolling:touch}
+#sheet h2{margin:2px 0 8px;font-size:19px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}.tabs button.sel{background:#2f6b3a}
+.card{background:rgba(255,255,255,.08);border-radius:14px;padding:10px;margin:8px 0}
+.card .r{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap}
+.card button.go{background:#2f6b3a;font-weight:800;min-height:48px}
+.lock{color:#ffb3a8;font-size:13px;margin-top:4px}.ok{color:#9be28c}.mut{opacity:.75;font-size:13px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}.chips button{min-width:60px}
+.hand{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.hand button{width:52px;height:64px;background:#fff;color:#111;font-weight:900;font-size:18px;border-radius:10px;padding:0}.hand button.red{color:#c3202a}.hand button[disabled]{opacity:.35}
+.table{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;text-align:center;margin:8px 0}.table div{background:rgba(255,255,255,.08);border-radius:10px;padding:6px;min-height:52px}
+.badge{display:inline-block;background:#d3202a;border-radius:8px;padding:1px 8px;font-weight:900;margin-left:6px;font-size:13px}
+#toast{position:absolute;left:50%;top:40%;transform:translateX(-50%);background:rgba(20,60,30,.94);border-radius:16px;padding:14px 20px;font-size:18px;font-weight:800;display:none;text-align:center;max-width:90vw;pointer-events:none}
+#nogl{display:none;position:absolute;inset:0;padding:30px;background:#10231a;text-align:center}
+@media (orientation:landscape) and (max-height:480px){
+ #chip{order:0;flex:1 1 0;height:48px;min-height:48px}#side{top:calc(120px + env(safe-area-inset-top))}#lever{height:96px}#bBrake{height:76px;width:100px}#tele{top:calc(58px + env(safe-area-inset-top))}.pill b{font-size:21px}#spd b{font-size:26px}#alert{top:calc(120px + env(safe-area-inset-top))}#hint{bottom:calc(60px + env(safe-area-inset-bottom))}
+ #left{flex-direction:row;align-items:flex-end}
+}
+</style>
+</head>
+<body>
+<div id="wrap">
+ <div id="sky"></div>
+ <canvas id="c"></canvas>
+ <div id="cab"></div>
+ <div id="top">
+  <a id="home" href="https://leafactivity.com/" aria-label="leafactivity.com">🍃 leafactivity.com</a>
+  <div id="money">$0</div>
+  <button id="chip" type="button">📋 Contracts</button>
+  <button id="bView" type="button" aria-label="Switch camera">📷</button>
+  <button id="bTown" type="button" aria-label="Station">🏘️</button>
+    <button id="bMenu" type="button" aria-label="Menu">☰</button>
+ </div>
+ <div id="tele">
+  <div class="pill" id="spd"><b id="vKmh">0</b><small>km/h</small></div>
+  <div class="pill"><b id="vGrade">0.0</b><small>grade %</small><div class="bar"><i id="fuelBar"></i></div></div>
+  <div class="pill"><b id="vAlt">0</b><small>alt m</small><div class="bar"><i id="tempBar" style="background:#f0a040"></i></div></div>
+  <div class="pill" id="limit"><i id="limNum">45</i><div><b id="limDist" style="font-size:15px">300 m</b><small>curve</small></div></div>
+ </div>
+ <div id="alert"></div>
+ <div id="hint"></div>
+ <div id="ctl">
+  <div id="left">
+   <button id="bBrake" type="button">🛑 BRAKE</button>
+   <div class="row"><button id="bPark" type="button" class="tiny">P Park</button><button id="bDir" type="button" class="tiny">▶ FWD</button></div>
+  </div>
+  <div id="right">
+   <button id="bUp" type="button" aria-label="More throttle">▲</button>
+   <div id="lever"><div class="fill"></div><div class="knob">0%</div></div>
+   <button id="bDn" type="button" aria-label="Less throttle">▼</button>
+  </div>
+ </div>
+ <div id="side"><button id="bWarp" type="button" class="tiny">1×</button><button id="bSnd" type="button" aria-label="Sound">🔊</button></div>
+ <div id="sheet"></div>
+ <div id="toast"></div>
+ <div id="nogl"><h2>3D needs WebGL</h2><p>Your browser could not start 3D graphics. Try another browser or update your phone.</p><p><a href="https://leafactivity.com/" style="color:#f3d98b">← leafactivity.com</a></p></div>
+</div>
+<script src="/leaftrain/three.min.js?v=149"></script>
+<script src="/leaftrain/engine.js?v=1"></script>
+<script src="/leaftrain/spades.js?v=1"></script>
+<script src="/leaftrain/world.js?v=1"></script>
+<script src="/leaftrain/train.js?v=1"></script>
+<script src="/leaftrain/game.js?v=1"></script>
+</body>
+</html>

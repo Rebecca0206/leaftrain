@@ -1,0 +1,16 @@
+{
+  "name": "LeafTrain",
+  "short_name": "LeafTrain",
+  "description": "Drive a freight train around the world. A free leafactivity.com game.",
+  "start_url": "/leaftrain/",
+  "scope": "/leaftrain/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#10231a",
+  "theme_color": "#1d4a28",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icons/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}
